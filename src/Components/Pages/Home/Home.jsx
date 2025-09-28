@@ -85,49 +85,49 @@ const Header = styled.p`
   text-align: center;
   font-size: 18px;
   line-height: 23px;
-  font-weight: 400;
+  font-weight: 500;
   color: #0d171c;
   font-family: var(--inter);
 
   @media (max-width: 810px) {
     margin: 24px auto;
-    font-size: 17px;
+    font-size: 22px;
     line-height: 22px;
   }
 
   @media (max-width: 728px) {
     margin: 22px auto;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 21px;
   }
 
   @media (max-width: 412px) {
     margin: 20px auto;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 21px;
   }
 
   @media (max-width: 390px) {
     margin: 18px auto;
-    font-size: 15px;
+    font-size: 20px;
     line-height: 20px;
   }
 
   @media (max-width: 384px) {
     margin: 17px auto;
-    font-size: 15px;
+    font-size: 19px;
     line-height: 20px;
   }
 
   @media (max-width: 375px) {
     margin: 16px auto;
-    font-size: 15px;
+    font-size: 18px;
     line-height: 20px;
   }
 
   @media (max-width: 360px) {
     margin: 15px auto;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 19px;
   }
 `;
@@ -166,6 +166,22 @@ const Tagline = styled.div`
     border-radius: 10px;
     font-family: var(--inter);
     background-color: #12a3ed;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(18, 163, 237, 0.3);
+
+    &:hover {
+      background-color: #0f8fd0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(18, 163, 237, 0.4);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(18, 163, 237, 0.2);
+      background-color: #0d7cb9;
+    }
   }
 
   @media (max-width: 810px) {
@@ -188,6 +204,14 @@ const Tagline = styled.div`
       height: 43px;
       font-size: 15px;
       line-height: 22px;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
     }
   }
 
@@ -326,7 +350,9 @@ const Tagline = styled.div`
 const Home = () => {
   return (
     <MainContainer>
-      <Header>Sign2Text</Header>
+      <Header>
+        <p>Sign2Text</p>
+      </Header>
       <img src={HomeImg} alt="Home" />
       <Tagline>
         <h1>Translate Sign Language</h1>
