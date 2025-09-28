@@ -357,7 +357,7 @@ const Home = () => {
       <Tagline>
         <h1>Translate Sign Language</h1>
         <p>Communicate effortlessly with real-time sign language translation</p>
-        <button>Start Translation</button>
+        <button>Learn More</button>
       </Tagline>
     </MainContainer>
   );
