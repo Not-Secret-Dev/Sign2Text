@@ -5,78 +5,109 @@ import { IoLanguageSharp } from "react-icons/io5";
 import { MdHistory } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosHelpCircleOutline } from "react-icons/io";
-import { useState } from "react";
 
 const MainContainer = styled.nav`
-  height: 11vh;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100% - 48px, 420px);
+  height: 60px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  z-index: 1000;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f7fafc;
-  font-family: var(--inter);
-`;
-
-const Navlinks = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
   justify-content: space-around;
+  align-items: center;
+  padding: 0 12px;
+  /* Prevent any text from becoming a <p> */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 `;
 
-const NavLink = styled(Link)`
+const NavItem = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
-  color: ${(props) => (props.$isActive ? "#0a1216" : "#0d171c")};
-  font-size: 12px;
-  transition: all 0.2s ease;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 6px 0;
+  transition: color 0.2s ease;
+  position: relative;
+  width: 60px;
+  /* Ensure no paragraph behavior */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.active {
+    color: #1f2937;
+  }
+
+  &:hover {
+    color: #1f2937;
+  }
 `;
 
-const IconWrapper = styled.div`
-  font-size: 18px;
-  transition: all 0.2s ease;
-  filter: ${(props) =>
-    props.$isActive ? "drop-shadow(0.5px 0.5px 0px currentColor)" : "none"};
-  transform: ${(props) => (props.$isActive ? "scale(1.1)" : "scale(1)")};
-  color: ${(props) => (props.$isActive ? "#0a1216" : "#0d171c")};
+const IconWrapper = styled.span`
+  /* Changed from div to span (inline-safe) */
+  font-size: 20px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ActiveIndicator = styled.span`
+  /* Use span instead of div for minimal footprint */
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: #1f2937;
+  border-radius: 2px;
+  opacity: ${(props) => (props.$isActive ? 1 : 0)};
+  transition: opacity 0.25s ease;
+  display: block;
 `;
 
 const Navbar = () => {
   const location = useLocation();
-  const [activeIcon, setActiveIcon] = useState(location.pathname);
 
   const navItems = [
     { path: "/", icon: IoHomeOutline, label: "Home" },
-    { path: "/translation", icon: IoLanguageSharp, label: "Translation" },
+    { path: "/translation", icon: IoLanguageSharp, label: "Translate" },
     { path: "/history", icon: MdHistory, label: "History" },
     { path: "/setting", icon: IoSettingsOutline, label: "Settings" },
     { path: "/help", icon: IoIosHelpCircleOutline, label: "Help" },
   ];
 
   return (
-    <MainContainer>
-      <Navlinks>
-        {navItems.map((item) => {
-          const IconComponent = item.icon;
-          const isActive = activeIcon === item.path;
+    <MainContainer role="navigation" aria-label="Main navigation">
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = location.pathname === item.path;
 
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              $isActive={isActive}
-              onClick={() => setActiveIcon(item.path)}
-            >
-              <IconWrapper $isActive={isActive}>
-                <IconComponent />
+        return (
+          <div key={item.path} style={{ position: "relative", width: "60px" }}>
+            <ActiveIndicator $isActive={isActive} />
+            <NavItem to={item.path} className={isActive ? "active" : ""}>
+              <IconWrapper>
+                <Icon />
               </IconWrapper>
-              {item.label}
-            </NavLink>
-          );
-        })}
-      </Navlinks>
+              <span>{item.label}</span> {/* Explicit span, no implicit <p> */}
+            </NavItem>
+          </div>
+        );
+      })}
     </MainContainer>
   );
 };

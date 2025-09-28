@@ -80,7 +80,7 @@ const MainContainer = styled.div`
   }
 `;
 
-const Header = styled.p`
+const Header = styled.div`
   margin: 28px auto;
   text-align: center;
   font-size: 18px;
