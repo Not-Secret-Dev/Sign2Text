@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoLanguageSharp } from "react-icons/io5";
-import { MdHistory } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 
@@ -24,7 +23,6 @@ const MainContainer = styled.nav`
   justify-content: space-around;
   align-items: center;
   padding: 0 12px;
-  /* Prevent any text from becoming a <p> */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 `;
 
@@ -56,7 +54,6 @@ const NavItem = styled(Link)`
 `;
 
 const IconWrapper = styled.span`
-  /* Changed from div to span (inline-safe) */
   font-size: 20px;
   margin-bottom: 4px;
   display: flex;
@@ -65,7 +62,6 @@ const IconWrapper = styled.span`
 `;
 
 const ActiveIndicator = styled.span`
-  /* Use span instead of div for minimal footprint */
   position: absolute;
   bottom: -8px;
   left: 50%;
@@ -85,7 +81,6 @@ const Navbar = () => {
   const navItems = [
     { path: "/", icon: IoHomeOutline, label: "Home" },
     { path: "/translation", icon: IoLanguageSharp, label: "Translate" },
-    { path: "/history", icon: MdHistory, label: "History" },
     { path: "/setting", icon: IoSettingsOutline, label: "Settings" },
     { path: "/help", icon: IoIosHelpCircleOutline, label: "Help" },
   ];
@@ -103,7 +98,7 @@ const Navbar = () => {
               <IconWrapper>
                 <Icon />
               </IconWrapper>
-              <span>{item.label}</span> {/* Explicit span, no implicit <p> */}
+              <span>{item.label}</span>
             </NavItem>
           </div>
         );
