@@ -3,6 +3,11 @@ import HomeImg from "/HomeImg.png";
 
 const MainContainer = styled.div`
   height: 85vh;
+  height: calc(100vh - 15vh);
+
+  @supports (height: 100dvh) {
+    height: 85dvh;
+  }
 
   img {
     height: 50%;
@@ -14,11 +19,12 @@ const MainContainer = styled.div`
   @media (max-width: 810px) {
     height: auto;
     min-height: 85vh;
-    padding: 20px 0;
+    min-height: 85dvh;
 
     img {
       height: auto;
       max-height: 40vh;
+      max-height: 40dvh;
       width: auto;
       max-width: 85%;
       margin: 0 auto;
@@ -29,7 +35,7 @@ const MainContainer = styled.div`
 
   @media (max-width: 728px) {
     img {
-      max-height: 38vh;
+      max-height: 38dvh;
       max-width: 88%;
     }
   }
@@ -38,21 +44,21 @@ const MainContainer = styled.div`
     padding: 15px 0;
 
     img {
-      max-height: 35vh;
+      max-height: 35dvh;
       max-width: 90%;
     }
   }
 
   @media (max-width: 390px) {
     img {
-      max-height: 34vh;
+      max-height: 34dvh;
       max-width: 92%;
     }
   }
 
   @media (max-width: 384px) {
     img {
-      max-height: 33vh;
+      max-height: 33dvh;
       max-width: 92%;
     }
   }
@@ -61,14 +67,14 @@ const MainContainer = styled.div`
     padding: 12px 0;
 
     img {
-      max-height: 32vh;
+      max-height: 32dvh;
       max-width: 93%;
     }
   }
 
   @media (max-width: 360px) {
     img {
-      max-height: 30vh;
+      max-height: 30dvh;
       max-width: 94%;
     }
   }
