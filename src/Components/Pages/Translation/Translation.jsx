@@ -1,265 +1,324 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import TranslationPng from "/TranslationCamera.png";
+import { Link } from "react-router-dom";
 
 const MainContainer = styled.div`
-  height: 85vh;
-  height: calc(100vh - 15vh);
-  @supports (height: 100dvh) {
-    height: 85dvh;
-  }
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 24px 20px 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
 
-  .camera-area {
-    position: relative;
-    margin-left: 5%;
-    height: 50%;
-    max-width: 90%;
-    background-color: #dddddd;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    cursor: pointer;
-  }
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+`;
 
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-  }
+const BackButton = styled(Link)`
+  background: white;
+  border: 1px solid #bae6fd;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-right: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.15);
+  color: #0ea5e9;
+  text-decoration: none;
+  transition: all 0.2s ease;
 
-  .placeholder-text {
-    font-family: var(--inter);
-    font-size: 18px;
-    color: #555;
-    text-align: center;
-    padding: 0 20px;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 810px) {
-    .camera-area {
-      height: auto;
-      max-height: 40vh;
-      max-height: 40dvh;
-      margin: 0 auto;
-      width: 85%;
-    }
-  }
-
-  @media (max-width: 728px) {
-    .camera-area {
-      width: 88%;
-      max-height: 38dvh;
-    }
-  }
-
-  @media (max-width: 412px) {
-    padding: 15px 0;
-    .camera-area {
-      width: 90%;
-      max-height: 35dvh;
-    }
-  }
-
-  @media (max-width: 390px) {
-    .camera-area {
-      width: 92%;
-      max-height: 34dvh;
-    }
-  }
-
-  @media (max-width: 384px) {
-    .camera-area {
-      width: 92%;
-      max-height: 33dvh;
-    }
-  }
-
-  @media (max-width: 375px) {
-    padding: 12px 0;
-    .camera-area {
-      width: 93%;
-      max-height: 32dvh;
-    }
-  }
-
-  @media (max-width: 360px) {
-    .camera-area {
-      width: 94%;
-      max-height: 30dvh;
-    }
+  &:hover {
+    background: #f0f9ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.2);
+    border-color: #7dd3fc;
   }
 `;
 
-const Header = styled.div`
-  margin: 28px auto;
-  text-align: center;
-  font-size: 18px;
-  line-height: 23px;
+const HeaderContent = styled.div`
+  flex: 1;
+`;
+
+const Title = styled.h1`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+`;
+
+const Subtitle = styled.p`
+  font-size: 1rem;
+  color: #475569;
+  margin: 0;
   font-weight: 500;
-  color: #0d171c;
-  font-family: var(--inter);
+`;
 
-  @media (max-width: 810px) {
-    font-size: 22px;
-    margin: 24px auto;
+const CameraContainer = styled.div`
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dbeafe;
+`;
+
+const CameraArea = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #f8fafc;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: ${(props) => (props.clickable ? "pointer" : "default")};
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 2px dashed #cbd5e1;
+
+  ${(props) =>
+    props.clickable &&
+    `
+    &:hover {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+      transform: translateY(-2px);
+    }
+  `}
+
+  ${(props) =>
+    props.active &&
+    `
+    border: 2px solid #0ea5e9;
+    border-radius: 16px;
+  `}
+`;
+
+const CameraPlaceholder = styled.div`
+  text-align: center;
+  color: #475569;
+  padding: 0 20px;
+`;
+
+const CameraIcon = styled.img`
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+`;
+
+const CameraText = styled.p`
+  font-size: 1.25rem;
+  margin: 0 0 8px 0;
+  color: #1e293b;
+  font-weight: 600;
+`;
+
+const CameraSubtext = styled.p`
+  font-size: 0.95rem;
+  margin: 0;
+  color: #64748b;
+  line-height: 1.5;
+`;
+
+const Video = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  display: ${(props) => (props.show ? "block" : "none")};
+  transform: scaleX(1);
+`;
+
+const Controls = styled.div`
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const Button = styled.button`
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
-  @media (max-width: 728px) {
-    font-size: 18px;
-    margin: 22px auto;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
-  @media (max-width: 412px) {
-    font-size: 20px;
-    margin: 20px auto;
-  }
-  @media (max-width: 390px) {
-    font-size: 20px;
-    margin: 18px auto;
-  }
-  @media (max-width: 384px) {
-    font-size: 19px;
-    margin: 17px auto;
-  }
-  @media (max-width: 375px) {
-    font-size: 18px;
-    margin: 16px auto;
-  }
-  @media (max-width: 360px) {
-    font-size: 18px;
-    margin: 15px auto;
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 `;
 
-const Tagline = styled.div`
-  text-align: center;
+const PrimaryButton = styled(Button)`
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
 
-  h1 {
-    font-size: 28px;
-    line-height: 35px;
-    font-weight: 400;
-    color: #0d171c;
-    margin: 20px auto 12px;
-    font-family: var(--inter);
-  }
-
-  button {
-    width: 150px;
-    height: 45px;
-    border: none;
-    color: #f7fafc;
-    font: 400 16px/24px var(--inter);
-    border-radius: 10px;
-    background-color: #12a3ed;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 8px rgba(18, 163, 237, 0.3);
-
-    &:hover {
-      background-color: #0f8fd0;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(18, 163, 237, 0.4);
-    }
-
-    &:active {
-      transform: translateY(1px);
-      box-shadow: 0 2px 4px rgba(18, 163, 237, 0.2);
-      background-color: #0d7cb9;
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  /* Responsive button */
-  @media (max-width: 810px) {
-    button {
-      width: 145px;
-      height: 43px;
-      font-size: 15px;
-    }
+  &:hover::after {
+    opacity: 1;
   }
-  @media (max-width: 728px) {
-    button {
-      width: 142px;
-      height: 42px;
-    }
-  }
-  @media (max-width: 412px) {
-    button {
-      width: 140px;
-      height: 40px;
-      font-size: 14px;
-    }
-  }
-  @media (max-width: 390px) {
-    button {
-      width: 138px;
-      height: 40px;
-    }
-  }
-  @media (max-width: 384px) {
-    button {
-      width: 135px;
-      height: 39px;
-      font-size: 13px;
-    }
-  }
-  @media (max-width: 375px) {
-    button {
-      width: 135px;
-      height: 39px;
-    }
-  }
-  @media (max-width: 360px) {
-    button {
-      width: 130px;
-      height: 38px;
-      font-size: 13px;
-    }
+`;
+
+const SecondaryButton = styled(Button)`
+  background: white;
+  color: #dc2626;
+  border: 2px solid #fecaca;
+
+  &:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.15);
   }
 `;
 
 const TranslationBox = styled.div`
-  margin-top: 20px;
-  padding: 12px 20px;
-  background-color: #f0f8ff;
-  border-radius: 8px;
-  font-family: var(--inter);
-  font-size: 18px;
-  color: #0d171c;
-  text-align: center;
-  min-height: 40px;
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dbeafe;
+`;
+
+const TranslationTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &::before {
+    content: "💬";
+  }
+`;
+
+const TranslationContent = styled.div`
+  min-height: 90px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #cce6ff;
+  text-align: center;
+  color: ${(props) => (props.active ? "#1e293b" : "#94a3b8")};
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+`;
 
-  @media (max-width: 412px) {
-    font-size: 16px;
-    padding: 10px 15px;
-  }
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 500;
+`;
+
+const IndicatorDot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${(props) =>
+    props.status === "active"
+      ? "#10b981"
+      : props.status === "error"
+      ? "#ef4444"
+      : "#94a3b8"};
+  box-shadow: 0 0 0 3px
+    ${(props) =>
+      props.status === "active"
+        ? "rgba(16, 185, 129, 0.2)"
+        : props.status === "error"
+        ? "rgba(239, 68, 68, 0.2)"
+        : "rgba(148, 163, 184, 0.2)"};
 `;
 
 const Translation = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef(null);
 
   const startCamera = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.style.display = "block";
         setIsCameraActive(true);
-        setError(null);
       }
     } catch (err) {
       console.error("Camera error:", err);
-      setError("Camera access denied or unavailable.");
+      setError(
+        "Unable to access camera. Please check permissions and try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -268,9 +327,18 @@ const Translation = () => {
       const tracks = videoRef.current.srcObject.getTracks();
       tracks.forEach((track) => track.stop());
       videoRef.current.srcObject = null;
-      videoRef.current.style.display = "none";
       setIsCameraActive(false);
     }
+  };
+
+  const captureFrame = () => {
+    if (isCameraActive) {
+      console.log("Capturing frame for translation...");
+    }
+  };
+
+  const handleBack = () => {
+    stopCamera();
   };
 
   useEffect(() => {
@@ -280,55 +348,93 @@ const Translation = () => {
   return (
     <MainContainer>
       <Header>
-        <p>Translate From Sign</p>
+        <BackButton to="/" onClick={handleBack}>
+          ←
+        </BackButton>
+        <HeaderContent>
+          <Title>Sign Language Translation</Title>
+          <Subtitle>
+            Translate sign language in real-time using your camera
+          </Subtitle>
+        </HeaderContent>
       </Header>
 
-      <div
-        className="camera-area"
-        onClick={!isCameraActive ? startCamera : undefined}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            !isCameraActive && startCamera();
-          }
-        }}
-        aria-label={isCameraActive ? "Live camera feed" : "Tap to start camera"}
-      >
-        {!isCameraActive ? (
-          error ? (
-            <div className="placeholder-text">{error}</div>
-          ) : (
-            <img
-              src={TranslationPng}
-              alt="Tap to start camera"
-              style={{ width: "80%", maxHeight: "80%", objectFit: "contain" }}
-            />
-          )
-        ) : null}
-        <video ref={videoRef} autoPlay muted playsInline aria-hidden="true" />
-      </div>
-
-      <Tagline>
-        <h1>Translate Sign Language</h1>
-        <button
-          onClick={() => {
-            if (!isCameraActive) {
+      <CameraContainer>
+        <CameraArea
+          clickable={!isCameraActive && !isLoading}
+          active={isCameraActive}
+          onClick={!isCameraActive && !isLoading ? startCamera : undefined}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (
+              (e.key === "Enter" || e.key === " ") &&
+              !isCameraActive &&
+              !isLoading
+            ) {
               startCamera();
-            } else {
-              // Later: trigger frame capture & send to Flask
-              alert("Camera is active! Ready to translate.");
             }
           }}
+          aria-label={
+            isCameraActive ? "Live camera feed" : "Start camera for translation"
+          }
         >
-          {isCameraActive ? "Translating..." : "Start Translation"}
-        </button>
-      </Tagline>
+          {!isCameraActive ? (
+            <CameraPlaceholder>
+              <CameraIcon src={TranslationPng} alt="Camera icon" />
+              <CameraText>{error ? "Camera Error" : "Start Camera"}</CameraText>
+              <CameraSubtext>
+                {error ? error : "Click to enable camera for translation"}
+              </CameraSubtext>
+            </CameraPlaceholder>
+          ) : null}
+
+          <Video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            show={isCameraActive}
+            aria-hidden={!isCameraActive}
+          />
+        </CameraArea>
+
+        <Controls>
+          {!isCameraActive ? (
+            <PrimaryButton onClick={startCamera} disabled={isLoading}>
+              {isLoading ? "Starting..." : "Start Camera"}
+            </PrimaryButton>
+          ) : (
+            <>
+              <PrimaryButton onClick={captureFrame}>
+                Capture & Translate
+              </PrimaryButton>
+              <SecondaryButton onClick={stopCamera}>
+                Stop Camera
+              </SecondaryButton>
+            </>
+          )}
+        </Controls>
+
+        <StatusIndicator>
+          <IndicatorDot
+            status={isCameraActive ? "active" : error ? "error" : "inactive"}
+          />
+          {isCameraActive
+            ? "Camera active - Ready for translation"
+            : error
+            ? "Camera unavailable"
+            : "Camera not started"}
+        </StatusIndicator>
+      </CameraContainer>
 
       <TranslationBox>
-        {isCameraActive
-          ? "Sign in front of the camera..."
-          : "Translation will appear here"}
+        <TranslationTitle>Translation</TranslationTitle>
+        <TranslationContent active={isCameraActive}>
+          {isCameraActive
+            ? "Sign in front of the camera and click 'Capture & Translate'"
+            : "Start the camera to begin translation"}
+        </TranslationContent>
       </TranslationBox>
     </MainContainer>
   );

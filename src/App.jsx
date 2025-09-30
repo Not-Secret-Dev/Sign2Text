@@ -4,17 +4,20 @@ import Translation from "./Components/Pages/Translation/Translation";
 import Setting from "./Components/Pages/Settings/Setting";
 import Help from "./Components/Pages/Help/Help";
 import Navbar from "./Components/Global/Navbar/Navbar";
+import { LanguageProvider } from "./Contexts/LangContext";
 
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/translation" element={<Translation />} />
-        <Route path="/setting" element={<Setting />} />
-        <Route path="/help" element={<Help />} />
-      </Routes>
-      <Navbar />
+      <LanguageProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/translation" element={<Translation />} />
+          <Route path="/setting" element={<Setting />} />
+          <Route path="/help" element={<Help />} />
+        </Routes>
+        <Navbar />
+      </LanguageProvider>
     </>
   );
 }
