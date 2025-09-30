@@ -11,6 +11,7 @@ const MainContainer = styled.div`
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
 `;
 
 const Header = styled.header`

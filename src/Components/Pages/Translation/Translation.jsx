@@ -11,6 +11,7 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
 `;
 
 const Header = styled.header`

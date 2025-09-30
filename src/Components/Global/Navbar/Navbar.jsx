@@ -8,6 +8,7 @@ import { IoIosHelpCircleOutline } from "react-icons/io";
 const MainContainer = styled.nav`
   position: fixed;
   bottom: 24px;
+  bottom: env(safe-area-inset-bottom);
   left: 50%;
   transform: translateX(-50%);
   width: min(100% - 48px, 420px);
